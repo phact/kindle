@@ -8,8 +8,8 @@ Gem::Specification.new do |s|
   s.authors     = ["Matt Petty"]
   s.email       = ["matt@kizmeta.com", "lodestone@gmail.com"]
   s.homepage    = ""
-  s.summary     = %q{Manage your Amazon kindle highlights and notes}
-  s.description = %q{This library provides command line and ruby access to Amazon kindle highlights and notes.}
+  s.summary     = Kindle::SUMMARY 
+  s.description = Kindle::DESCRIPTION 
 
   s.rubyforge_project = "kindle"
 
@@ -23,6 +23,7 @@ Gem::Specification.new do |s|
   # s.add_runtime_dependency "rest-client"
   s.add_runtime_dependency 'nokogiri'
   s.add_runtime_dependency 'mechanize'
+  s.add_runtime_dependency 'highline'
   s.add_development_dependency('rdoc')
   s.add_development_dependency('aruba')
   s.add_development_dependency('rake','~> 0.9.2')

@@ -18,8 +18,10 @@ describe Kindle::Highlight do
       @highlight.should_not be_nil
     end
     
-    it "should contain an ASIN" do
-      @highlight.should respond_to :asin
+    [:asin, :highlight].each do |attr|
+      it "should contain #{attr}" do
+        @highlight.should respond_to attr
+      end
     end
 
   end

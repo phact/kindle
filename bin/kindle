@@ -1,16 +1,74 @@
 #!/usr/bin/env ruby -w
+lib = File.expand_path(File.dirname(__FILE__) + '/../lib')
+$LOAD_PATH.unshift(lib) if File.directory?(lib) && !$LOAD_PATH.include?(lib)
 
 require 'optparse'
 require 'methadone'
+require 'kindle'
+require 'highline/import'
 
 include Methadone::Main
 
-main do # Add args you want: |like,so|
+
+# arg :amazon_login, :optional
+
+main do |login,password=nil| # Add args you want: |like,so|
   # your program code here
   # You can access CLI options via
   # the options Hash
+  include Kindle
+  
+  if login.nil?
+    login = ask("Enter your Amazon login:")
+  end
+
+  if password.nil?
+    password = ask("Enter your Amazon password (we don't save this): ") { |q| q.echo = '*' }
+  end
+
+  # p login
+  # p password
+  # p options
+
+   
+
+  hp = HighlightsParser.new(:username => login, :password => password)
+
+  puts "Getting your kindle highlights..."
+
+  highlights = hp.get_highlights
+
+  puts highlights
+
+  # unless login = ARGV[0]
+  #   print "Enter your Amazon login:"
+  #   login = gets
+  # end
+  # print "Enter your password for Amazon (We don't store this)"
+  # # passwd = gets
+  # # ask("Enter your password for Amazon (we don't store this):  " ) { |q| q.echo = "x" }
+
+  # begin
+  #   k = Kindle::Kindle.new(:login => login, :password => passwd)
+  #   puts "Getting your kindle highlights..."
+  #   highlights = k.get_kindle_highlights
+  #   puts highlights
+  # rescue => ex
+  #   puts "Crud, something went wrong..."
+  #   puts ex
+  # end
 end
 
+description Kindle::DESCRIPTION
+
+# on("--[no-]switch","-s","Some switch")
+# on("-f FILE","--flag","Some flag")
+# on("-x FOO") do |foo|
+#   # something more complex; this is exactly OptionParser opts.on 
+# end
+
+# arg :'amazon_login'
+# arg :'amazon_password', :optional
 # supplemental methods here
 
 # Declare command-line interface here

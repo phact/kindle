@@ -2,6 +2,7 @@ source "http://rubygems.org"
 
 gem 'nokogiri'
 gem 'mechanize'
+gem 'highline'
 
 group :test do
   gem 'rspec'
