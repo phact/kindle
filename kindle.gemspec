@@ -6,10 +6,10 @@ Gem::Specification.new do |s|
   s.name        = "kindle"
   s.version     = Kindle::VERSION
   s.authors     = ["Matt Petty"]
-  s.email       = ["matt@kizmeta.com"]
+  s.email       = ["matt@kizmeta.com", "lodestone@gmail.com"]
   s.homepage    = ""
-  s.summary     = %q{TODO: Write a gem summary}
-  s.description = %q{TODO: Write a gem description}
+  s.summary     = %q{Manage your Amazon kindle highlights and notes}
+  s.description = %q{This library provides command line and ruby access to Amazon kindle highlights and notes.}
 
   s.rubyforge_project = "kindle"
 
@@ -21,6 +21,8 @@ Gem::Specification.new do |s|
   # specify any dependencies here; for example:
   # s.add_development_dependency "rspec"
   # s.add_runtime_dependency "rest-client"
+  s.add_runtime_dependency 'nokogiri'
+  s.add_runtime_dependency 'mechanize'
   s.add_development_dependency('rdoc')
   s.add_development_dependency('aruba')
   s.add_development_dependency('rake','~> 0.9.2')
