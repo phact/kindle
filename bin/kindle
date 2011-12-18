@@ -1,22 +1,35 @@
-#!/usr/bin/env ruby
- 
-lib = File.expand_path(File.dirname(__FILE__) + '/../lib')
-$LOAD_PATH.unshift(lib) if File.directory?(lib) && !$LOAD_PATH.include?(lib)
+#!/usr/bin/env ruby -w
 
-require 'kindle'
- 
-unless login = ARGV[0]
-  print "Enter your Amazon login:"
-  login = gets
-end
-print "Enter your password for Amazon (We don't store this)"
-passwd = gets
+require 'optparse'
+require 'methadone'
 
-begin
-  k = Kindle::Kindle.new(:login => login, :password => passwd)
-  puts "Getting your kindle highlights..."
-  highlights = k.get_kindle_highlights
-  puts highlights
-rescue => ex
-  puts "Crud, something went wrong..."
+include Methadone::Main
+
+main do # Add args you want: |like,so|
+  # your program code here
+  # You can access CLI options via
+  # the options Hash
 end
+
+# supplemental methods here
+
+# Declare command-line interface here
+
+# description "one line description of your app"
+#
+# Accept flags via:
+# on("--flag VAL","Some flag")
+# options[flag] will contain VAL
+#
+# Specify switches via:
+# on("--[no-]switch","Some switch")
+#
+# Or, just call OptionParser methods on opts
+#
+# Require an argument
+# arg :some_arg 
+#
+# # Make an argument optional
+# arg :optional_arg, :optional
+
+go!
