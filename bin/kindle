@@ -10,10 +10,6 @@ begin
   k = Kindle::Highlights.new(:login => login, :password => passwd)
   puts "Getting your kindle highlights..."
   highlights = k.fetch_highlights # TODO: Pass in something to bide our time
-  # TODO: Multiple output formats. CSV, JSON, Pretty, HTML?
-  highlights.each do |highlight|
-    puts "#{highlight.asin};#{highlight.title};#{highlight.author};#{highlight.highlight}"
-  end
 rescue => ex
   # TODO Actually handle this!
   puts ex

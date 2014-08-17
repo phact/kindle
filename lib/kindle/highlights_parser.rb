@@ -18,6 +18,7 @@ module Kindle
               }
 
       page = login
+ 
       fetch_highlights(page, state)
     end
 
@@ -54,6 +55,7 @@ module Kindle
         client = Cql::Client.connect(hosts: [DSE_HOST])
 
 
+#      state = {:current_offset=>"3100", :current_upcoming=>[], :title=>"American Wheels, Chinese Roads: The Story of General Motors in China", :author=>"by Michael J. Dunne"}
 
       new_highlights = extract_highlights_from(page, state)
 
@@ -62,7 +64,7 @@ module Kindle
 	
 
 	title =""
-	
+
 	new_highlights.each{
 	
 		|myHighlight| 
@@ -70,9 +72,10 @@ module Kindle
 		
 		statement = client.prepare('INSERT INTO highlights (id, highlight, asin, title, author) VALUES (?, ?, ?, ?, ?)')
 
+		if (!myHighlight.id.nil?)
+			statement.execute(myHighlight.id, myHighlight.highlight, myHighlight.asin, myHighlight.title, myHighlight.author)
+		end
 
-		statement.execute(myHighlight.id, myHighlight.highlight, myHighlight.asin, myHighlight.title, myHighlight.author)
-		
 		title= myHighlight.title
 		
 	}
@@ -80,9 +83,10 @@ module Kindle
 
         highlights << new_highlights
         page = get_the_next_page(state, highlights.flatten)
-        new_highlights = extract_highlights_from(page, state)
+        
+	new_highlights = extract_highlights_from(page, state)
       end
-      puts "made it"
+      puts "Highlights Written to Cassandra"
       highlights.flatten
 
       client.close
@@ -96,7 +100,8 @@ module Kindle
     end
 
     def extract_highlights_from(page, state)
-      return [] if (page/".yourHighlight").length == 0
+
+    return [] if (page/".yourHighlight").length == 0
       (page/".yourHighlight").each_with_index.map { |hl,i| parse_highlight(hl, state,i) }
     end
 
@@ -123,10 +128,19 @@ module Kindle
 
     def parse_highlight(hl, state,hid)
       annotationArray =  hl.xpath('//*[@id="annotation_id"]')
-      highlight_id = annotationArray[hid]["value"]
+      
       highlight    = (hl/".highlight").text
       asin         = (hl/".asin").text
-      Highlight.new(highlight_id, highlight, asin, state[:title], state[:author])
+ 
+
+      if (!annotationArray[hid].nil?)
+     	highlight_id = annotationArray[hid]["value"]
+      else
+	puts "WARNING: Missing highlight ID for " + state[:title]
+      end
+
+     Highlight.new(highlight_id, highlight, asin, state[:title], state[:author])
+
     end
 
   end
