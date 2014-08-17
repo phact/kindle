@@ -4,6 +4,7 @@ module Kindle
 
     include Nokogiri
     
+    DSE_HOST= 'localhost';
     KINDLE_URL = 'http://kindle.amazon.com'
 
     def initialize(options = {:login => nil, :password => nil})
@@ -46,18 +47,46 @@ module Kindle
 
     def fetch_highlights(page, state)
       page = get_the_first_highlight_page_from(page, state)
-
       highlights = []
+
+
+#       Get ready to write to DSE
+        client = Cql::Client.connect(hosts: [DSE_HOST])
+
+
 
       new_highlights = extract_highlights_from(page, state)
 
       until new_highlights.length == 0 do
+	puts new_highlights.length
+	
+
+	title =""
+	
+	new_highlights.each{
+	
+		|myHighlight| 
+		client.use('kindle')
+		
+		statement = client.prepare('INSERT INTO highlights (id, highlight, asin, title, author) VALUES (?, ?, ?, ?, ?)')
+
+
+		statement.execute(myHighlight.id, myHighlight.highlight, myHighlight.asin, myHighlight.title, myHighlight.author)
+		
+		title= myHighlight.title
+		
+	}
+	puts title
+
         highlights << new_highlights
         page = get_the_next_page(state, highlights.flatten)
         new_highlights = extract_highlights_from(page, state)
       end
-
+      puts "made it"
       highlights.flatten
+
+      client.close
+
     end
 
     def get_the_first_highlight_page_from(page, state)
@@ -68,7 +97,7 @@ module Kindle
 
     def extract_highlights_from(page, state)
       return [] if (page/".yourHighlight").length == 0
-      (page/".yourHighlight").map { |hl| parse_highlight(hl, state) }
+      (page/".yourHighlight").each_with_index.map { |hl,i| parse_highlight(hl, state,i) }
     end
 
     def initialize_state_with_page(state, page)
@@ -92,8 +121,9 @@ module Kindle
       page
     end
 
-    def parse_highlight(hl, state)
-      highlight_id = hl.xpath('//*[@id="annotation_id"]').first["value"]
+    def parse_highlight(hl, state,hid)
+      annotationArray =  hl.xpath('//*[@id="annotation_id"]')
+      highlight_id = annotationArray[hid]["value"]
       highlight    = (hl/".highlight").text
       asin         = (hl/".asin").text
       Highlight.new(highlight_id, highlight, asin, state[:title], state[:author])
