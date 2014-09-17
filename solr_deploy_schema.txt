@@ -1,0 +1,7 @@
+curl http://localhost:8983/solr/resource/kindle.highlights/solrconfig.xml --data-binary @solrconfig.xml -H 'Content-type:text/xml;'
+curl http://localhost:8983/solr/resource/kindle.highlights/schema.xml --data-binary @schema.xml -H 'Content-type:text/xml;'
+curl "http://localhost:8983/solr/admin/cores?action=CREATE&name=kindle.highlights"
+
+
+
+http://localhost:8983/solr/kindle.highlights/select?q=*%3A*&rows=0&wt=json&facet=true&facet.field=author

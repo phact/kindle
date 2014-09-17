@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+
+
+<schema name="highlights" version="1.5">
+
+ <fields>
+ 
+
+    <field name="id" indexed="true" stored="true" required="true" type="myString" />
+    <field name="highlight" indexed="true" stored="true" required="true" type="myString" />
+    <field name="asin" indexed="true" stored="true" required="true" type="myString" />
+    <field name="title" indexed="true" stored="true" required="true" type="myString" />
+    <field name="author" indexed="true" stored="true" required="true" type="myString" />
+
+</fields>
+
+<uniqueKey>id</uniqueKey>
+
+
+ <types>
+    <fieldType name="myString" class="solr.TextField" positionIncrementGap="100">
+      
+      <analyzer type="index">
+          <tokenizer class="solr.WhitespaceTokenizerFactory" />
+          <filter class="solr.LowerCaseFilterFactory" />
+      </analyzer>
+      <analyzer type="query">
+          <tokenizer class="solr.WhitespaceTokenizerFactory" />
+          <filter class="solr.LowerCaseFilterFactory" />
+      </analyzer> 
+
+    </fieldType>
+ </types>
+</schema>
